@@ -2,6 +2,7 @@ package com.prashant.bookmanagement.controller;
 
 import java.util.List;
 
+import org.aspectj.apache.bcel.classfile.Module.Require;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -12,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 import com.prashant.bookmanagement.model.Book;
 import com.prashant.bookmanagement.service.BookService;
 
@@ -33,11 +36,16 @@ public class BookController {
 	}
 	
 	// getting all books from database
-
+	// take params for pagination as page size and page number
+	
 	@GetMapping("/all-books")
-	public ResponseEntity<List<Book>> findAllBooks() {
-		return bookService.findAllBooks();
+	public ResponseEntity<List<Book>> findAllBooks(
+	        @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
+	        @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber
+	) {
+	    return bookService.findAllBooks(pageNumber, pageSize);
 	}
+
 	
 	//getting book with specific bookId
 	@GetMapping("/{bookId}")
